@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>国际音标学习 · IPA</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a2e}
+.header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:16px 20px;text-align:center}
+.header h1{font-size:20px;font-weight:700}
+.header p{font-size:13px;opacity:.85;margin-top:4px}
+.nav-bar{background:#fff;display:flex;flex-wrap:wrap;padding:10px 12px;gap:6px;justify-content:center;border-bottom:1px solid #e8e8e8;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.nav-btn{width:36px;height:36px;border-radius:50%;border:2px solid #ddd;background:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.nav-btn:hover{border-color:#667eea;color:#667eea}
+.nav-btn.active{background:#667eea;border-color:#667eea;color:#fff}
+.nav-btn.empty{opacity:.4;cursor:default;border-style:dashed}
+.main{max-width:800px;margin:0 auto;padding:20px 16px 40px}
+.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.title{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:16px;padding-bottom:12px;border-bottom:3px solid #667eea;display:flex;align-items:center;gap:10px}
+.title .n{background:#667eea;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.txt{line-height:1.9;font-size:15px;color:#333;padding:12px 16px;background:#f8f9ff;border-radius:10px;border-left:3px solid #667eea;white-space:pre-line;margin-bottom:16px}
+.l-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.l-card{background:#fff;border:2px solid #e8ecf4;border-radius:12px;padding:10px;text-align:center;cursor:pointer;transition:all .2s}
+.l-card:hover{border-color:#667eea;background:#f0f2ff;transform:translateY(-2px)}
+.l-card.v{border-color:#ffa726;background:#fff8e1}
+.l-card.v:hover{border-color:#f57c00;background:#fff3e0}
+.l-card .ch{font-size:22px;font-weight:700;color:#2c3e50}
+.l-card .ip{display:block;font-size:18px;color:#e74c3c;font-weight:700;font-family:'Times New Roman',serif;margin-top:4px;background:#fef0f0;border-radius:6px;padding:2px 8px}
+.l-card .hint{font-size:11px;color:#999;margin-top:4px}
+.l-card .tag{font-size:10px;background:#e8eaf6;color:#3949ab;padding:1px 6px;border-radius:4px;vertical-align:super}
+.p-block{margin-bottom:14px;border:2px solid #e8ecf4;border-radius:12px;overflow:hidden}
+.p-hdr{background:#667eea;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.p-hdr .pi{font-size:18px;font-weight:700;font-family:'Times New Roman',serif;background:rgba(255,255,255,.2);padding:0 8px;border-radius:4px}
+.p-hdr .pd{font-size:13px;opacity:.9}
+.p-hdr .pr{font-size:12px;background:rgba(255,255,255,.2);padding:1px 8px;border-radius:6px;margin-left:auto}
+.p-body{padding:8px 12px;background:#fafbff}
+.w-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px}
+.w-item{display:flex;align-items:baseline;gap:6px;padding:5px 8px;border-radius:8px;cursor:pointer;transition:all .1s;background:#f5f5ff}
+.w-item:hover{background:#eef0ff;transform:translateX(3px)}
+.w-item .w{font-weight:600;color:#2c3e50;font-size:14px}
+.w-item .wi{color:#e74c3c;font-family:'Times New Roman',serif;font-size:13px}
+.w-item .wc{color:#999;font-size:12px}
+.w-item .sound{font-size:10px;display:none;margin-left:auto}
+.w-item:hover .sound{display:inline}
+.txt .cw{color:#2c3e50;font-weight:600;cursor:pointer;border-bottom:2px solid #667eea;padding:0 2px;border-radius:3px;transition:all .1s;white-space:nowrap}.txt .cw:hover{background:#eef0ff;border-bottom-color:#e74c3c}.txt .cw .spk{font-size:0;display:inline}.txt .cw:hover .spk{font-size:12px;margin-left:3px}.txt .ip{border-bottom:1px dashed #e74c3c}.cta{display:flex;justify-content:space-between;margin-top:20px;gap:12px}
+.cta button{flex:1;padding:12px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.cta .prev{background:#e8eaf6;color:#3949ab}
+.cta .prev:hover:not(:disabled){background:#c5cae9}
+.cta .next{background:#667eea;color:#fff}
+.cta .next:hover:not(:disabled){background:#5a6fd6}
+.cta button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:480px){.l-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}.w-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>🔊 国际音标学习</h1>
+<p>点击字母/单词听发音 · 音标分开展示</p>
+</div>
+<div class="nav-bar" id="nav"></div>
+<div class="main"><div class="card">
+<div class="title" id="tt"></div>
+<div id="bd"></div>
+<div class="cta">
+<button class="prev" id="pb" onclick="g(-1)">◀ 上一课</button>
+<button class="next" id="nb" onclick="g(1)">下一课 ▶</button>
+</div>
+</div></div>
+<script src="ipa.data.js"></script>
+<script>
+var DATA=IPA_LESSONS,KEYS=[],CUR=1;
+for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
+KEYS.sort(function(a,b){return a-b});
+function pw(w){if(w){new Audio('https://dict.youdao.com/dictvoice?audio='+encodeURIComponent(w)+'&type=2').play().catch(function(){})}}
+function r(n){
+ var d=DATA[n];if(!d)return;
+ document.getElementById('tt').innerHTML='<span class="n">'+n+'</span> '+d.title;
+ var b=document.getElementById('bd'),h='';
+ if(d.t==='letters'){
+  h+='<div class="txt">'+d.s.replace(/\n/g,'<br>')+'</div><div class="l-grid">';
+  for(var i=0;i<d.l.length;i++){
+   var l=d.l[i],iv=d.v.indexOf(l[0])>=0;
+   h+='<div class="l-card'+(iv?' v':'')+'" onclick="pw(\''+(l[0][0])+'\')">';
+   h+='<div class="ch">'+l[0]+(iv?'<span class="tag">元</span>':'<span class="tag">辅</span>')+'</div>';
+   h+='<div class="ip">['+l[1]+']</div><div class="hint">🔊 点击发音</div></div>';}
+  h+='</div>';
+ }else if(d.t==='p'){
+  for(var i=0;i<d.p.length;i++){
+   var ph=d.p[i];
+   h+='<div class="p-block"><div class="p-hdr"><span class="pi">['+ph.i+']</span><span class="pd">'+ph.d+'</span><span class="pr">'+ph.r+'</span></div>';
+   h+='<div class="p-body"><div class="w-grid">';
+   for(var j=0;j<ph.w.length;j++){
+    var wd=ph.w[j];
+    h+='<div class="w-item" onclick="pw(\''+wd[0].replace(/'/g,"\\'")+'\')"><span class="w">'+wd[0]+'</span><span class="wi">['+wd[1]+']</span>'
+     +(wd[2]?'<span class="wc">'+wd[2]+'</span>':'')+'<span class="sound">🔊</span></div>';}
+   h+='</div></div></div>';}
+ }else{
+  var txt=d.s.replace(/\n/g,'<br>');
+  txt=txt.replace(/(\w+)\[([^\]]+)\]/g,'<span class="cw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
+  h='<div class="txt">'+txt+'</div>';}
+ b.innerHTML=h;
+ document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',parseInt(b.dataset.num)===n)});
+ document.getElementById('pb').disabled=n===KEYS[0];
+ document.getElementById('nb').disabled=n===KEYS[KEYS.length-1];
+}
+function g(d){var i=KEYS.indexOf(CUR),n=i+d;if(n<0||n>=KEYS.length)return;CUR=KEYS[n];r(CUR);window.scrollTo({top:0,behavior:'smooth'})}
+var nav=document.getElementById('nav');
+for(var i=1;i<=16;i++){
+ var b=document.createElement('button');
+ b.className='nav-btn';
+ b.textContent=i;b.dataset.num=i;
+ b.onclick=function(){var nn=parseInt(this.dataset.num);if(DATA[nn]){CUR=nn;r(CUR);window.scrollTo({top:0,behavior:'smooth'})}};
+ nav.appendChild(b);}
+r(1);
+</script>
+</body>
+</html>
