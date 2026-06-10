@@ -117,29 +117,283 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 var DATA=IPA_LESSONS,KEYS=[],CUR=1;
 for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
-function playPhone(ph, exWord){
- if(exWord){
-  pw(exWord);
+
+// Pure phoneme audio synthesis using Web Audio API
+// Formant frequencies for English vowels (from Ladefoged & Maddieson)
+var PHONEME_AUDIO={};
+PHONEME_AUDIO.formants={
+  'i\u02d0':{f1:280,f2:2250,f3:2900},
+  '\u026a':{f1:400,f2:1920,f3:2600},
+  'e':{f1:550,f2:1800,f3:2500},
+  '\u00e6':{f1:700,f2:1750,f3:2500},
+  '\u0251\u02d0':{f1:750,f2:1200,f3:2500},
+  '\u0252':{f1:700,f2:1000,f3:2500},
+  '\u0254\u02d0':{f1:500,f2:800,f3:2500},
+  '\u028a':{f1:400,f2:1000,f3:2500},
+  'u\u02d0':{f1:300,f2:800,f3:2300},
+  '\u028c':{f1:650,f2:1200,f3:2500},
+  '\u025c\u02d0':{f1:600,f2:1400,f3:2500},
+  '\u0259':{f1:500,f2:1500,f3:2500}
+};
+PHONEME_AUDIO.diphthongs={
+  'e\u026a':{from:'e',to:'\u026a'},
+  'a\u026a':{from:'\u028c',to:'\u026a'},
+  '\u0254\u026a':{from:'\u0254\u02d0',to:'\u026a'},
+  '\u0259\u028a':{from:'\u0259',to:'\u028a'},
+  'a\u028a':{from:'\u028c',to:'\u028a'},
+  '\u026a\u0259':{from:'\u026a',to:'\u0259'},
+  'e\u0259':{from:'e',to:'\u0259'},
+  '\u028a\u0259':{from:'\u028a',to:'\u0259'}
+};
+// Consonant types for synthesis
+PHONEME_AUDIO.consType={
+  'p':'plosive','b':'plosive','t':'plosive','d':'plosive','k':'plosive','\u0261':'plosive',
+  'f':'fricative','v':'fricative','\u03b8':'fricative','\u00f0':'fricative',
+  's':'fricative','z':'fricative',
+  '\u0283':'fricative','\u0292':'fricative',
+  'h':'fricative','r':'approx',
+  't\u0283':'affricate','d\u0292':'affricate','tr':'affricate','dr':'affricate',
+  'ts':'affricate','dz':'affricate',
+  'm':'nasal','n':'nasal','\u014b':'nasal',
+  'j':'approx','w':'approx','l':'approx'
+};
+PHONEME_AUDIO.consFreq={
+  'p':200,'b':200,'t':4000,'d':4000,'k':1500,'\u0261':1500,
+  'f':6000,'v':6000,'\u03b8':5000,'\u00f0':5000,
+  's':7000,'z':7000,'\u0283':3500,'\u0292':3500,
+  'h':2000,'r':1500,
+  't\u0283':3500,'d\u0292':3500,'tr':3500,'dr':3500,
+  'ts':7000,'dz':7000,
+  'm':250,'n':300,'\u014b':400,
+  'j':300,'w':200,'l':300
+};
+
+var ctx=null;
+function getCtx(){
+ if(!ctx) ctx=new(window.AudioContext||window.webkitAudioContext)();
+ return ctx;
+}
+
+function playPhoneme(ph){
+ var c=getCtx();
+ if(PHONEME_AUDIO.diphthongs[ph]){
+  playDiphthong(c,PHONEME_AUDIO.diphthongs[ph].from,PHONEME_AUDIO.diphthongs[ph].to);
   return;
  }
- // Fallback: old mapping (only used if no example word)
- var pmap={};
- pmap['i\u02d0']='ee';pmap['\u026a']='i';pmap['\u025c\u02d0']='ur';pmap['\u0259']='a';
- pmap['\u0251\u02d0']='ar';pmap['\u028c']='u';pmap['\u0254\u02d0']='aw';pmap['\u0252']='o';
- pmap['u\u02d0']='oo';pmap['\u028a']='uu';pmap['\u00e6']='aa';pmap['e']='e';
- pmap['e\u026a']='ay';pmap['\u0254\u026a']='oy';pmap['a\u026a']='eye';
- pmap['\u0259\u028a']='oh';pmap['a\u028a']='ow';
- pmap['\u026a\u0259']='ear';pmap['e\u0259']='air';pmap['\u028a\u0259']='ore';
- pmap['p']='pp';pmap['b']='bb';pmap['t']='tt';pmap['d']='dd';
- pmap['k']='kk';pmap['\u0261']='gg';pmap['f']='ff';pmap['v']='v';
- pmap['s']='s';pmap['z']='z';
- pmap['\u03b8']='th';pmap['\u00f0']='the';pmap['\u0283']='sh';pmap['\u0292']='je';
- pmap['h']='h';pmap['r']='r';pmap['t\u0283']='ch';pmap['d\u0292']='j';
- pmap['tr']='tr';pmap['dr']='dr';pmap['ts']='ts';pmap['dz']='dz';
- pmap['m']='m';pmap['n']='n';pmap['\u014b']='ng';pmap['j']='y';
- pmap['w']='w';pmap['l']='l';
- var t=pmap[ph]||ph;
- new Audio('https://dict.youdao.com/dictvoice?audio='+encodeURIComponent(t)+'&type=1').play();
+ if(PHONEME_AUDIO.formants[ph]){
+  playVowel(c,ph,600);
+  return;
+ }
+ var ct=PHONEME_AUDIO.consType[ph];
+ if(ct==='plosive'){playPlosive(c,ph);return;}
+ if(ct==='fricative'){playFricative(c,ph);return;}
+ if(ct==='affricate'){playAffricate(c,ph);return;}
+ if(ct==='nasal'){playNasal(c,ph);return;}
+ if(ct==='approx'){playApprox(c,ph);return;}
+}
+
+function playVowel(c,ph,dur){
+ var f=PHONEME_AUDIO.formants[ph];
+ if(!f){playVowelSimple(c,ph,dur);return;}
+ var sr=c.sampleRate;
+ var len=Math.floor(sr*dur/1000);
+ var buf=c.createBuffer(1,len,sr);
+ var data=buf.getChannelData(0);
+ // Use sawtooth + triangle mix for natural vowel sound
+ for(var i=0;i<len;i++){
+  var t=i/sr;
+  var env=Math.min(1,i/(sr*0.02))*(1-Math.max(0,(i-len+sr*0.05))/(sr*0.05));
+  // Fundamental (around 120Hz for male voice)
+  var f0=120;
+  var sig=0;
+  // Add harmonics with formant amplification
+  for(var h=1;h<=20;h++){
+   var freq=h*f0;
+   var amp=1/h;
+   // Apply formant filters (simplified: amplify near formant frequencies)
+   var f1gain=1/(1+Math.pow((freq-f.f1)/(f.f1*0.3),4));
+   var f2gain=1/(1+Math.pow((freq-f.f2)/(f.f2*0.3),4));
+   var f3gain=1/(1+Math.pow((freq-f.f3)/(f.f3*0.3),4));
+   var gain=amp*(0.4+f1gain*2+f2gain*1.5+f3gain*0.8);
+   sig+=gain*Math.sin(2*Math.PI*freq*t);
+  }
+  data[i]=sig*env*0.15;
+ }
+ playBuffer(c,buf);
+}
+
+function playVowelSimple(c,ph,dur){
+ // Fallback: just a sine wave at a reasonable frequency
+ var freqMap={'i\u02d0':350,'\u026a':400,'e':500,'\u00e6':700,'\u0251\u02d0':750,'\u0252':650,
+   '\u0254\u02d0':550,'\u028a':450,'u\u02d0':350,'\u028c':650,'\u025c\u02d0':550,'\u0259':500};
+ var freq=freqMap[ph]||400;
+ var sr=c.sampleRate;
+ var len=Math.floor(sr*dur/1000);
+ var buf=c.createBuffer(1,len,sr);
+ var data=buf.getChannelData(0);
+ for(var i=0;i<len;i++){
+  var t=i/sr;
+  var env=Math.min(1,i/(sr*0.02))*(1-Math.max(0,(i-len+sr*0.05))/(sr*0.05));
+  data[i]=Math.sin(2*Math.PI*freq*t)*env*0.3;
+ }
+ playBuffer(c,buf);
+}
+
+function playDiphthong(c,from,to){
+ var f1=PHONEME_AUDIO.formants[from]||{f1:500,f2:1500,f3:2500};
+ var f2=PHONEME_AUDIO.formants[to]||{f1:400,f2:2000,f3:2500};
+ var dur=600;
+ var sr=c.sampleRate;
+ var len=Math.floor(sr*dur/1000);
+ var buf=c.createBuffer(1,len,sr);
+ var data=buf.getChannelData(0);
+ for(var i=0;i<len;i++){
+  var t=i/sr;
+  var p=i/len;
+  var env=Math.min(1,i/(sr*0.03))*(1-Math.max(0,(i-len+sr*0.06))/(sr*0.06));
+  var f={f1:f1.f1+(f2.f1-f1.f1)*p,f2:f1.f2+(f2.f2-f1.f2)*p,f3:f1.f3+(f2.f3-f1.f3)*p};
+  var sig=0;
+  for(var h=1;h<=15;h++){
+   var freq=h*120;
+   var amp=1/h;
+   var g1=1/(1+Math.pow((freq-f.f1)/(f.f1*0.3),4));
+   var g2=1/(1+Math.pow((freq-f.f2)/(f.f2*0.3),4));
+   var g3=1/(1+Math.pow((freq-f.f3)/(f.f3*0.3),4));
+   sig+=amp*(0.4+g1*2+g2*1.5+g3*0.8)*Math.sin(2*Math.PI*freq*t);
+  }
+  data[i]=sig*env*0.15;
+ }
+ playBuffer(c,buf);
+}
+
+function playPlosive(c,ph){
+ var freq=PHONEME_AUDIO.consFreq[ph]||500;
+ var voiced=(ph==='b'||ph==='d'||ph==='\u0261');
+ var sr=c.sampleRate;
+ var dur=voiced?120:80;
+ var len=Math.floor(sr*dur/1000);
+ var buf=c.createBuffer(1,len,sr);
+ var data=buf.getChannelData(0);
+ for(var i=0;i<len;i++){
+  var t=i/sr;var p=i/len;
+  var env=Math.max(0,1-p*2);
+  var noise=Math.random()*2-1;
+  var sig=noise*env;
+  if(voiced){
+   var v=Math.sin(2*Math.PI*freq*t)*env*0.3;
+   sig+=v;
+  }
+  data[i]=sig*0.3;
+ }
+ playBuffer(c,buf);
+}
+
+function playFricative(c,ph){
+ var freq=PHONEME_AUDIO.consFreq[ph]||3000;
+ var voiced=(ph==='v'||ph==='\u00f0'||ph==='z'||ph==='\u0292');
+ var dur=voiced?400:350;
+ var sr=c.sampleRate;
+ var len=Math.floor(sr*dur/1000);
+ var buf=c.createBuffer(1,len,sr);
+ var data=buf.getChannelData(0);
+ var bw=freq*0.5; // bandwidth
+ for(var i=0;i<len;i++){
+  var t=i/sr;
+  var env=Math.min(1,i/(sr*0.03))*(1-Math.max(0,(i-len+sr*0.08))/(sr*0.08));
+  var noise=0;
+  for(var j=0;j<10;j++) noise+=Math.random()*2-1;
+  noise/=10; // filtered-ish noise
+  // Bandpass around freq
+  noise=noise*env;
+  // Tone for voiced
+  if(voiced){
+   noise+=Math.sin(2*Math.PI*150*t)*0.3*env;
+  }
+  data[i]=noise*0.2;
+ }
+ playBuffer(c,buf);
+}
+
+function playAffricate(c,ph){
+ // Plosive burst + fricative
+ var freq=PHONEME_AUDIO.consFreq[ph]||3500;
+ var dur=200;
+ var sr=c.sampleRate;
+ var len=Math.floor(sr*dur/1000);
+ var buf=c.createBuffer(1,len,sr);
+ var data=buf.getChannelData(0);
+ for(var i=0;i<len;i++){
+  var t=i/sr;
+  var p=i/len;
+  var env=Math.min(1,i/(sr*0.015))*(1-Math.max(0,(i-len+sr*0.06))/(sr*0.06));
+  var sig;
+  if(p<0.3){
+   sig=(Math.random()*2-1)*env*0.4;
+  } else {
+   sig=(Math.random()*2-1)*env*0.2;
+   sig+=Math.sin(2*Math.PI*120*t)*0.15*env;
+  }
+  data[i]=sig;
+ }
+ playBuffer(c,buf);
+}
+
+function playNasal(c,ph){
+ var freq=PHONEME_AUDIO.consFreq[ph]||300;
+ var dur=350;
+ var sr=c.sampleRate;
+ var len=Math.floor(sr*dur/1000);
+ var buf=c.createBuffer(1,len,sr);
+ var data=buf.getChannelData(0);
+ for(var i=0;i<len;i++){
+  var t=i/sr;
+  var env=Math.min(1,i/(sr*0.03))*(1-Math.max(0,(i-len+sr*0.08))/(sr*0.08));
+  var sig=0;
+  // Nasal formants (lower frequencies dominate)
+  for(var h=1;h<=10;h++){
+   var hz=h*120;
+   var amp=1/h;
+   // Nasal resonance around 250-400Hz
+   var ng=1/(1+Math.pow((hz-freq)/(freq*0.4),4));
+   sig+=amp*(0.5+ng*3)*Math.sin(2*Math.PI*hz*t);
+  }
+  data[i]=sig*env*0.12;
+ }
+ playBuffer(c,buf);
+}
+
+function playApprox(c,ph){
+ var freq=PHONEME_AUDIO.consFreq[ph]||300;
+ var dur=300;
+ var sr=c.sampleRate;
+ var len=Math.floor(sr*dur/1000);
+ var buf=c.createBuffer(1,len,sr);
+ var data=buf.getChannelData(0);
+ for(var i=0;i<len;i++){
+  var t=i/sr;var p=i/len;
+  var env=Math.min(1,i/(sr*0.03))*(1-Math.max(0,(i-len+sr*0.08))/(sr*0.08));
+  var sig=0;
+  for(var h=1;h<=12;h++){
+   var hz=h*120;
+   var amp=1/h;
+   var g=1/(1+Math.pow((hz-freq)/(freq*0.3),4));
+   sig+=amp*(0.5+g*2)*Math.sin(2*Math.PI*hz*t+Math.sin(2*Math.PI*3*t)*0.3);
+  }
+  data[i]=sig*env*0.15;
+ }
+ playBuffer(c,buf);
+}
+
+function playBuffer(c,buf){
+ var src=c.createBufferSource();
+ src.buffer=buf;
+ src.connect(c.destination);
+ src.start();
+}
+
+// Replace old playPhone: now only calls playPhoneme
+function playPhone(ph,exWord){
+ playPhoneme(ph);
 }
 
 
@@ -211,7 +465,7 @@ function renderTree(n){
   for(var vi=0;vi<12&&vi<d.vowels.length;vi++){
    var v=d.vowels[vi];
    if(v&&v.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\',\''+(v[2]||'')+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\')">';
     h+='<span class="ph-sym">['+esc(v[0])+']</span>';
     h+='<span class="ph-type">'+esc(v[1])+'</span>';
     h+='<span class="play">🔊</span></div>';
@@ -224,7 +478,7 @@ function renderTree(n){
   for(var vi=12;vi<d.vowels.length;vi++){
    var v=d.vowels[vi];
    if(v&&v.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\',\''+(v[2]||'')+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\')">';
     h+='<span class="ph-sym">['+esc(v[0])+']</span>';
     h+='<span class="ph-type">'+esc(v[1])+'</span>';
     h+='<span class="play">🔊</span></div>';
@@ -237,7 +491,7 @@ function renderTree(n){
   for(var ci=0;ci<20&&ci<d.consonants.length;ci++){
    var c=d.consonants[ci];
    if(c&&c.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\',\''+(c[2]||'')+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\')">';
     h+='<span class="ph-sym">['+esc(c[0])+']</span>';
     h+='<span class="ph-type">'+esc(c[1])+'</span>';
     h+='<span class="play">🔊</span></div>';
@@ -250,7 +504,7 @@ function renderTree(n){
   for(var ci=20;ci<d.consonants.length;ci++){
    var c=d.consonants[ci];
    if(c&&c.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\',\''+(c[2]||'')+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\')">';
     h+='<span class="ph-sym">['+esc(c[0])+']</span>';
     h+='<span class="ph-type">'+esc(c[1])+'</span>';
     h+='<span class="play">🔊</span></div>';
