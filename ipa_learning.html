@@ -89,6 +89,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .branch-5 .n-label{background:#e0f7fa}
 
 @media(max-width:480px){.l-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}.tree-node{padding-left:20px}.word-leaf{padding-left:30px}.desc-box{margin-left:18px;font-size:12px}}
+.ph-grid{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 6px 28px}
+.ph-card{display:flex;flex-direction:column;align-items:center;width:90px;padding:8px 4px;background:#fff;border:1px solid #e0e0e0;border-radius:8px;cursor:pointer;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ph-card:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(0,0,0,.12);border-color:#90caf9}
+.ph-sym{font-size:22px;font-weight:700;color:#1a237e;font-family:'Courier New',monospace}
+.ph-type{font-size:10px;color:#666;margin:2px 0}
+.ph-word{font-size:12px;color:#333;text-align:center}
+.ph-word-phone{font-size:10px;color:#999;display:block}
+.ph-card .play{font-size:14px;margin-top:2px}
 </style>
 </head>
 <body>
@@ -128,7 +136,7 @@ function renderTree(n){
  var b=document.getElementById('bd'),h='';
  
  // Root node
- h+='<div class="tree"><div class="tree-root"><span class="n">'+n+'</span>. '+esc(d.title)+(d.s&&d.t!=='letters'&&d.t!=='txt'?'<br><span class="sub">'+esc(d.s).replace(/\n/g,'<br>')+'</span>':'')+'</div>';
+ h+='<div class="tree"><div class="tree-root"><span class="n">'+n+'</span>. '+esc(d.title)+(d.s&&d.t!=='letters'&&d.t!=='txt'&&d.t!=='phoneme'?'<br><span class="sub">'+esc(d.s).replace(/\n/g,'<br>')+'</span>':'')+'</div>';
  
  // Desc toggle (show/hide full explanation)
  if(d.desc && d.desc.length>0){
@@ -171,8 +179,44 @@ function renderTree(n){
     h+='</div>';}
   }
   
- }else{
-  // Text type (lessons 15-16) - mind map with heading-phonetic-word grouping
+ }else if(d.t==='phoneme'){
+  // Lesson 0: Phoneme cards (vowels + consonants)
+  h+='<div class="desc-box" style="margin-top:8px">'+esc(d.desc||'').replace(/\n/g,'<br>')+'</div>';
+  
+  // Vowels section
+  h+='<div class="tree-root" style="margin-top:12px;font-size:15px"><span style="color:#c62828">●</span> 元音音素 (20个)</div>';
+  h+='<div class="ph-grid">';
+  var vw=d.vowels||[];
+  for(var vi=0;vi<vw.length;vi++){
+   var v=vw[vi];
+   if(v&&v.length>=3){
+    h+='<div class="ph-card" onclick="pw(\''+v[2].replace(/'/g,"\\'")+'\')">';
+    h+='<span class="ph-sym">['+esc(v[0])+']</span>';
+    h+='<span class="ph-type">'+esc(v[1])+'</span>';
+    h+='<span class="ph-word">'+esc(v[2])+' <span class="ph-word-phone">['+esc(v[3])+']</span></span>';
+    h+='<span class="play">🔊</span></div>';
+   }
+  }
+  h+='</div>';
+  
+  // Consonants section
+  h+='<div class="tree-root" style="margin-top:16px;font-size:15px"><span style="color:#1565c0">●</span> 辅音音素 (28个)</div>';
+  h+='<div class="ph-grid">';
+  var cw=d.consonants||[];
+  for(var ci=0;ci<cw.length;ci++){
+   var c=cw[ci];
+   if(c&&c.length>=3){
+    h+='<div class="ph-card" onclick="pw(\''+c[2].replace(/'/g,"\\'")+'\')">';
+    h+='<span class="ph-sym">['+esc(c[0])+']</span>';
+    h+='<span class="ph-type">'+esc(c[1])+'</span>';
+    h+='<span class="ph-word">'+esc(c[2])+' <span class="ph-word-phone">['+esc(c[3])+']</span></span>';
+    h+='<span class="play">🔊</span></div>';
+   }
+  }
+  h+='</div>';
+  
+ }else{  // Text type
+  // (lessons 15-16) - mind map with heading-phonetic-word grouping
   var txt=d.desc||d.s||'';
   var lines=txt.split('\n');
   var sectionIdx=0;
@@ -315,7 +359,7 @@ function g(dir){
 
 // Build nav
 var nav=document.getElementById('nav');
-for(var i=1;i<=16;i++){
+for(var i=1;i<=17;i++){
  var b=document.createElement('button');
  b.className='nav-btn';
  b.textContent=i;b.dataset.num=i;
