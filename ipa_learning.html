@@ -130,8 +130,8 @@ function renderTree(n){
  // Root node
  h+='<div class="tree"><div class="tree-root"><span class="n">'+n+'</span>. '+esc(d.title)+'</div>';
  
- // Desc toggle (show/hide full explanation)
- if(d.desc && d.desc.length>0){
+ // Desc toggle (show/hide full explanation) - skip for txt type (content already shown)
+ if(d.t!=='txt' && d.desc && d.desc.length>0){
   var descId='desc_'+n;
   h+='<div style="margin:2px 0 4px 28px"><span class="desc-toggle" onclick="var e=document.getElementById(\''+descId+'\');e.style.display=e.style.display===\'none\'?\'block\':\'none\'">📖 查看详细说明</span></div>';
   h+='<div id="'+descId+'" class="desc-box" style="display:none">'+makeClickableWords(esc(d.desc).replace(/\n/g,'<br>'))+'</div>';
@@ -172,9 +172,53 @@ function renderTree(n){
   }
   
  }else{
-  // Text type (lessons 15-16)
+  // Text type (lessons 15-16) - mind map style
   var txt=d.desc||d.s||'';
-  h+='<div class="txt-content">'+makeClickableWords(esc(txt).replace(/\n/g,'<br>'))+'</div>';
+  var lines=txt.split('\n');
+  var sectionIdx=0;
+  for(var li=0;li<lines.length;li++){
+   var line=lines[li].trim();
+   if(!line)continue;
+   // Section header detection
+   var isSectionHeader=false;
+   // Headers that start lesson content sections
+   if(line.length<30 && !line.match(/\[.+\]/) && (
+    line.match(/^[\d]+[.\u3002]/) ||  // numbered: 1.xxx 2.xxx
+    line.indexOf('用自然拼读的意义')>=0 ||
+    line.indexOf('如何用音标背单词')>=0 ||
+    line.indexOf('一个提醒')>=0 ||
+    line.indexOf('实战')>=0 ||
+    line.indexOf('例子')>=0 ||
+    line.indexOf('音标拼读方法')>=0 ||
+    line.indexOf('用音标背单词的工具')>=0 ||
+    line.indexOf('用音标背带有词缀')>=0 ||
+    line===('用音标背单词')
+   )) isSectionHeader=true;
+   
+   if(isSectionHeader){
+    // Tree node for section header
+    h+='<div class="tree-node'+(li>=lines.length-2?' single':'')+'"><span class="n-label branch-'+(sectionIdx%6)+'" style="font-weight:700;font-size:14px">'+esc(line)+'</span></div>';
+    sectionIdx++;
+   }else{
+    // Word leaf or text block
+    var m=line.match(/^(.*?)(\w+)\[([^\]]+)\](.*)$/);
+    if(m && m[2]){
+     // Word with phonetic
+     h+='<div class="word-leaf" onclick="pw(\''+m[2].replace(/'/g,"\\'")+'\')">';
+     if(m[1])h+='<span style="color:#666;font-size:12px">'+esc(m[1])+'</span> ';
+     h+='<span class="wl">'+esc(m[2])+'</span> ';
+     h+='<span class="wp">['+esc(m[3])+']</span>';
+     if(m[4])h+='<span class="wz">'+esc(m[4])+'</span>';
+     h+='<span class="play">🔊</span></div>';
+    }else if(line.match(/\[.+\]/)){
+     // Phonetic-only line (syllable splitting examples)
+     h+='<div class="desc-box" style="border-left-color:#43a047;background:#f1f8e9;padding:4px 10px;margin:2px 0 2px 28px;font-size:13px">'+esc(line).replace(/(\w+)\[([^\]]+)\]/g,'<span class="dw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]')+'</div>';
+    }else{
+     // Plain text
+     h+='<div class="desc-box" style="border-left-color:#43a047;background:#f1f8e9;padding:4px 10px;margin:2px 0 2px 28px;font-size:13px">'+esc(line)+'</div>';
+    }
+   }
+  }
  }
  
  h+='</div>';
