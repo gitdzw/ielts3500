@@ -19,9 +19,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
 .title{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:16px;padding-bottom:12px;border-bottom:3px solid #667eea;display:flex;align-items:center;gap:10px}
 .title .n{background:#667eea;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.txt,.desc{line-height:1.9;font-size:15px;color:#333;padding:12px 16px;background:#f8f9ff;border-radius:10px;white-space:pre-wrap;margin-bottom:16px}
-.txt{border-left:3px solid #667eea}
-.desc{border-left:3px solid #43a047}
+.txt{line-height:1.9;font-size:15px;color:#333;padding:12px 16px;background:#f8f9ff;border-radius:10px;border-left:3px solid #667eea;white-space:pre-line;margin-bottom:16px}
 .l-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
 .l-card{background:#fff;border:2px solid #e8ecf4;border-radius:12px;padding:10px;text-align:center;cursor:pointer;transition:all .2s}
 .l-card:hover{border-color:#667eea;background:#f0f2ff;transform:translateY(-2px)}
@@ -79,23 +77,14 @@ function r(n){
  var d=DATA[n];if(!d)return;
  document.getElementById('tt').innerHTML='<span class="n">'+n+'</span> '+d.title;
  var b=document.getElementById('bd'),h='';
- // Render desc (full explanation text from Yuque) if present
- if(d.desc){
-  var txt=d.desc.replace(/\n/g,'<br>');
-  // Make clickable words in desc: word[phonetic] patterns
-  txt=txt.replace(/(\w+)\[([^\]]+)\]/g,'<span class="cw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
-  h+='<div class="desc">'+txt+'</div>';
- }
- // Render type-specific content
  if(d.t==='letters'){
-  h+='<div class="l-grid">';
+  h+='<div class="txt">'+d.s.replace(/\n/g,'<br>')+'</div><div class="l-grid">';
   for(var i=0;i<d.l.length;i++){
    var l=d.l[i],iv=d.v.indexOf(l[0])>=0;
    h+='<div class="l-card'+(iv?' v':'')+'" onclick="pw(\''+(l[0][0])+'\')">';
    h+='<div class="ch">'+l[0]+(iv?'<span class="tag">元</span>':'<span class="tag">辅</span>')+'</div>';
    h+='<div class="ip">['+l[1]+']</div><div class="hint">🔊 点击发音</div></div>';}
   h+='</div>';
-  if(d.s){h+='<div class="txt">'+d.s.replace(/\n/g,'<br>')+'</div>';}
  }else if(d.t==='p'){
   for(var i=0;i<d.p.length;i++){
    var ph=d.p[i];
@@ -107,11 +96,9 @@ function r(n){
      +(wd[2]?'<span class="wc">'+wd[2]+'</span>':'')+'<span class="sound">🔊</span></div>';}
    h+='</div></div></div>';}
  }else{
-  var txt= d.desc ? '' : (d.s||'').replace(/\n/g,'<br>'); // If desc already shown, skip s; if no desc, show s
-  if(txt){
-   txt=txt.replace(/(\w+)\[([^\]]+)\]/g,'<span class="cw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
-   h+='<div class="txt">'+txt+'</div>';}
- }
+  var txt=d.s.replace(/\n/g,'<br>');
+  txt=txt.replace(/(\w+)\[([^\]]+)\]/g,'<span class="cw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
+  h='<div class="txt">'+txt+'</div>';}
  b.innerHTML=h;
  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',parseInt(b.dataset.num)===n)});
  document.getElementById('pb').disabled=n===KEYS[0];
