@@ -97,6 +97,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ph-word{font-size:12px;color:#333;text-align:center}
 .ph-word-phone{font-size:10px;color:#999;display:block}
 .ph-card .play{font-size:14px;margin-top:2px}
+.ph-card .ph-hint{font-size:9px;color:#999;margin-top:1px;display:block}
 </style>
 </head>
 <body>
@@ -117,6 +118,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 var DATA=IPA_LESSONS,KEYS=[],CUR=1;
 for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
+
+
+function playPhone(ph,egWord){
+ var m={
+  'iː':'ee','ɪ':'ih','ɜː':'er','ə':'uh','ɑː':'ah','ʌ':'uh',
+  'ɔː':'aw','ɒ':'o','uː':'oo','ʊ':'oo','æ':'a','e':'eh',
+  'eɪ':'ay','ɔɪ':'oy','aɪ':'eye','əʊ':'oh','aʊ':'ow',
+  'ɪə':'eer','eə':'air','ʊə':'oor',
+  'p':'p','b':'b','t':'t','d':'d','k':'k','ɡ':'g','f':'f','v':'v','s':'s','z':'z',
+  'θ':'th','ð':'th','ʃ':'sh','ʒ':'zh','h':'h','r':'r',
+  'tʃ':'ch','dʒ':'j','tr':'tr','dr':'dr','ts':'ts','dz':'dz','m':'m','n':'n','ŋ':'ng',
+  'j':'y','w':'w','l':'l'
+ };
+ var t=m[ph]||ph;
+ var u=new SpeechSynthesisUtterance(t);
+ u.lang='en-US';u.rate=0.75;
+ var vs=window.speechSynthesis.getVoices();
+ var v=vs.filter(function(x){return x.name.indexOf('Aria')>=0&&x.lang.indexOf('en')>=0})[0];
+ if(v)u.voice=v;
+ window.speechSynthesis.cancel();
+ window.speechSynthesis.speak(u);
+}
 
 function pw(w){
  if(w){new Audio('https://dict.youdao.com/dictvoice?audio='+encodeURIComponent(w)+'&type=2').play().catch(function(){})}
@@ -175,13 +198,13 @@ function renderTree(n){
     h+='<span class="wl">'+esc(w[0])+'</span> ';
     h+='<span class="wp">['+esc(w[1])+']</span>';
     if(w[2]){h+='<span class="wz">'+esc(w[2])+'</span>';}
-    h+='<span class="play">🔊</span>';
+    h+='<span class="play">🔊</span><span class="ph-hint">音标</span>';
     h+='</div>';}
   }
   
  }else if(d.t==='phoneme'){
   // Lesson 0: Phoneme cards (vowels + consonants)
-  h+='<div class="desc-box" style="margin-top:8px">'+esc(d.desc||'').replace(/\n/g,'<br>')+'</div>';
+  // desc-box content moved to "查看详细说明" toggle
   
   // Vowels section
   h+='<div class="tree-root" style="margin-top:12px;font-size:15px"><span style="color:#c62828">●</span> 元音音素 (20个)</div>';
@@ -194,7 +217,7 @@ function renderTree(n){
     h+='<span class="ph-sym">['+esc(v[0])+']</span>';
     h+='<span class="ph-type">'+esc(v[1])+'</span>';
     h+='<span class="ph-word">'+esc(v[2])+' <span class="ph-word-phone">['+esc(v[3])+']</span></span>';
-    h+='<span class="play">🔊</span></div>';
+    h+='<span class="play">🔊</span><span class="ph-hint">音标</span></div>';
    }
   }
   h+='</div>';
@@ -210,7 +233,7 @@ function renderTree(n){
     h+='<span class="ph-sym">['+esc(c[0])+']</span>';
     h+='<span class="ph-type">'+esc(c[1])+'</span>';
     h+='<span class="ph-word">'+esc(c[2])+' <span class="ph-word-phone">['+esc(c[3])+']</span></span>';
-    h+='<span class="play">🔊</span></div>';
+    h+='<span class="play">🔊</span><span class="ph-hint">音标</span></div>';
    }
   }
   h+='</div>';
@@ -226,7 +249,7 @@ function renderTree(n){
    return '<div class="word-leaf" onclick="pw(\''+(word||'').replace(/'/g,"\\'")+'\')"><span class="wl">'+esc(word||'')+'</span> '+
     (phone?'<span class="wp">['+esc(phone)+']</span>':'')+
     (extra?'<span class="wz">'+esc(extra)+'</span>':'')+
-    '<span class="play">🔊</span></div>';
+    '<span class="play">🔊</span><span class="ph-hint">音标</span></div>';
   }
   function info(text){return '<div class="desc-box" style="border-left-color:#43a047;background:#f1f8e9;padding:4px 10px;margin:2px 0 2px 28px;font-size:13px">'+esc(text)+'</div>';}
   function phoneB(text){
