@@ -97,7 +97,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ph-word{font-size:12px;color:#333;text-align:center}
 .ph-word-phone{font-size:10px;color:#999;display:block}
 .ph-card .play{font-size:14px;margin-top:2px}
-.ph-card .ph-hint{font-size:9px;color:#999;margin-top:1px;display:block}
 </style>
 </head>
 <body>
@@ -198,7 +197,7 @@ function renderTree(n){
     h+='<span class="wl">'+esc(w[0])+'</span> ';
     h+='<span class="wp">['+esc(w[1])+']</span>';
     if(w[2]){h+='<span class="wz">'+esc(w[2])+'</span>';}
-    h+='<span class="play">🔊</span><span class="ph-hint">音标</span>';
+    h+='<span class="play">🔊</span>';
     h+='</div>';}
   }
   
@@ -213,11 +212,11 @@ function renderTree(n){
   for(var vi=0;vi<vw.length;vi++){
    var v=vw[vi];
    if(v&&v.length>=3){
-    h+='<div class="ph-card" onclick="pw(\''+v[2].replace(/'/g,"\\'")+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+v[0].replace(/'/g,"\\'")+'\',\''+v[2].replace(/'/g,"\\'")+'\')">';
     h+='<span class="ph-sym">['+esc(v[0])+']</span>';
     h+='<span class="ph-type">'+esc(v[1])+'</span>';
     h+='<span class="ph-word">'+esc(v[2])+' <span class="ph-word-phone">['+esc(v[3])+']</span></span>';
-    h+='<span class="play">🔊</span><span class="ph-hint">音标</span></div>';
+    h+='<span class="play">🔊</span></div>';
    }
   }
   h+='</div>';
@@ -229,11 +228,11 @@ function renderTree(n){
   for(var ci=0;ci<cw.length;ci++){
    var c=cw[ci];
    if(c&&c.length>=3){
-    h+='<div class="ph-card" onclick="pw(\''+c[2].replace(/'/g,"\\'")+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+c[0].replace(/'/g,"\\'")+'\',\''+c[2].replace(/'/g,"\\'")+'\')">';
     h+='<span class="ph-sym">['+esc(c[0])+']</span>';
     h+='<span class="ph-type">'+esc(c[1])+'</span>';
     h+='<span class="ph-word">'+esc(c[2])+' <span class="ph-word-phone">['+esc(c[3])+']</span></span>';
-    h+='<span class="play">🔊</span><span class="ph-hint">音标</span></div>';
+    h+='<span class="play">🔊</span></div>';
    }
   }
   h+='</div>';
@@ -249,7 +248,7 @@ function renderTree(n){
    return '<div class="word-leaf" onclick="pw(\''+(word||'').replace(/'/g,"\\'")+'\')"><span class="wl">'+esc(word||'')+'</span> '+
     (phone?'<span class="wp">['+esc(phone)+']</span>':'')+
     (extra?'<span class="wz">'+esc(extra)+'</span>':'')+
-    '<span class="play">🔊</span><span class="ph-hint">音标</span></div>';
+    '<span class="play">🔊</span></div>';
   }
   function info(text){return '<div class="desc-box" style="border-left-color:#43a047;background:#f1f8e9;padding:4px 10px;margin:2px 0 2px 28px;font-size:13px">'+esc(text)+'</div>';}
   function phoneB(text){
