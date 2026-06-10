@@ -172,52 +172,114 @@ function renderTree(n){
   }
   
  }else{
-  // Text type (lessons 15-16) - mind map style
+  // Text type (lessons 15-16) - mind map with heading-phonetic-word grouping
   var txt=d.desc||d.s||'';
   var lines=txt.split('\n');
   var sectionIdx=0;
+  
+  // Helpers
+  function wl(word, phone, extra){
+   return '<div class="word-leaf" onclick="pw(\''+(word||'').replace(/'/g,"\\'")+'\')"><span class="wl">'+esc(word||'')+'</span> '+
+    (phone?'<span class="wp">['+esc(phone)+']</span>':'')+
+    (extra?'<span class="wz">'+esc(extra)+'</span>':'')+
+    '<span class="play">🔊</span></div>';
+  }
+  function info(text){return '<div class="desc-box" style="border-left-color:#43a047;background:#f1f8e9;padding:4px 10px;margin:2px 0 2px 28px;font-size:13px">'+esc(text)+'</div>';}
+  function phoneB(text){
+   var t=esc(text);
+   t=t.replace(/(\w+)\[([^\]]+)\]/g,'<span class="dw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
+   return '<div class="desc-box" style="border-left-color:#ffa726;background:#fff8e1;padding:4px 10px;margin:2px 0 2px 28px;font-family:\'Courier New\',monospace;font-size:13px">'+t+'</div>';
+  }
+  function shdr(text){
+   return '<div class="tree-node"><span class="n-label branch-'+(sectionIdx++%6)+'" style="font-weight:700;font-size:15px;padding:4px 12px">'+esc(text)+'</span></div>';
+  }
+  
+  // Known section headers
+  var HEADERS=['用自然拼读的意义','一个提醒','用音标背单词的工具是什么？','实战：','例子：','音标拼读方法','如何用音标背单词','如何用音标背带有词缀的单词','用音标背单词'];
+  function isHdr(ln){if(ln.length>=30||ln.match(/\[.+\]/))return false;for(var i=0;i<HEADERS.length;i++){if(ln.indexOf(HEADERS[i])>=0)return true}return false;}
+  
+  // Extract first English word from a line
+  function firstWord(s){var m=s.match(/^([a-zA-Z'\u2019-]+)/);return m?m[1]:null;}
+  
+  // Check if a line looks like "word meaning" (word + text without phonetic brackets)
+  function isWordLine(ln){
+   if(ln.match(/\[.+\]/)) return false;  // has phonetics already
+   if(ln.length<1||ln.length>50) return false;
+   var w=firstWord(ln);
+   if(!w) return false;
+   // Must start with a real English word (at least 2 letters or 1 letter with apostrophe)
+   if(w.length===1 && w!=="'" && !ln.match(/^[A-Za-z]\s/)) return false;
+   return true;
+  }
+  
+  // Split a word+meaning line into word and extra text
+  function splitWordMeaning(ln){
+   var w=firstWord(ln);
+   if(!w) return null;
+   var rest=ln.substring(w.length).trim();
+   return {word:w, extra:rest};
+  }
+  
+  // Main loop
   for(var li=0;li<lines.length;li++){
    var line=lines[li].trim();
-   if(!line)continue;
-   // Section header detection
-   var isSectionHeader=false;
-   // Headers that start lesson content sections
-   if(line.length<30 && !line.match(/\[.+\]/) && (
-    line.match(/^[\d]+[.\u3002]/) ||  // numbered: 1.xxx 2.xxx
-    line.indexOf('用自然拼读的意义')>=0 ||
-    line.indexOf('如何用音标背单词')>=0 ||
-    line.indexOf('一个提醒')>=0 ||
-    line.indexOf('实战')>=0 ||
-    line.indexOf('例子')>=0 ||
-    line.indexOf('音标拼读方法')>=0 ||
-    line.indexOf('用音标背单词的工具')>=0 ||
-    line.indexOf('用音标背带有词缀')>=0 ||
-    line===('用音标背单词')
-   )) isSectionHeader=true;
+   if(!line) continue;
    
-   if(isSectionHeader){
-    // Tree node for section header
-    h+='<div class="tree-node'+(li>=lines.length-2?' single':'')+'"><span class="n-label branch-'+(sectionIdx%6)+'" style="font-weight:700;font-size:14px">'+esc(line)+'</span></div>';
-    sectionIdx++;
-   }else{
-    // Word leaf or text block
-    var m=line.match(/^(.*?)(\w+)\[([^\]]+)\](.*)$/);
-    if(m && m[2]){
-     // Word with phonetic
-     h+='<div class="word-leaf" onclick="pw(\''+m[2].replace(/'/g,"\\'")+'\')">';
-     if(m[1])h+='<span style="color:#666;font-size:12px">'+esc(m[1])+'</span> ';
-     h+='<span class="wl">'+esc(m[2])+'</span> ';
-     h+='<span class="wp">['+esc(m[3])+']</span>';
-     if(m[4])h+='<span class="wz">'+esc(m[4])+'</span>';
-     h+='<span class="play">🔊</span></div>';
-    }else if(line.match(/\[.+\]/)){
-     // Phonetic-only line (syllable splitting examples)
-     h+='<div class="desc-box" style="border-left-color:#43a047;background:#f1f8e9;padding:4px 10px;margin:2px 0 2px 28px;font-size:13px">'+esc(line).replace(/(\w+)\[([^\]]+)\]/g,'<span class="dw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]')+'</div>';
-    }else{
-     // Plain text
-     h+='<div class="desc-box" style="border-left-color:#43a047;background:#f1f8e9;padding:4px 10px;margin:2px 0 2px 28px;font-size:13px">'+esc(line)+'</div>';
+   // Section headers
+   if(isHdr(line)){h+=shdr(line);continue;}
+   
+   // Numbered steps (group consecutive ones)
+   var nm=line.match(/^(\d+\.)(.*)$/);
+   if(nm){
+    var grp=line;
+    while(li+1<lines.length&&lines[li+1].trim().match(/^\d+\./)){grp+='  '+lines[++li].trim();}
+    h+=shdr(grp);continue;
+   }
+   
+   // Pattern A: word[phonetic] extra (e.g. receipt[r\u026a'si:t] 收据)
+   var wp=line.match(/^[\s]*([A-Za-z'\u2019-]+)\[([^\]]+)\](.*)$/);
+   if(wp&&wp[1].length>0){
+    h+=wl(wp[1], wp[2], wp[3]);continue;
+   }
+   
+   // Pattern B: word [phonetic] extra (e.g. chef [\u0283ef]\u53a8\u5e08)
+   var wp2=line.match(/^([A-Za-z'\u2019-]+)\s+(\[[^\]]+\])(.*)$/);
+   if(wp2&&wp2[1].length>0&&wp2[1].length<20){
+    // Check if the word before [ is valid
+    h+=wl(wp2[1], wp2[2].replace(/[\[\]]/g,''), wp2[3]);continue;
+   }
+   
+   // Pattern C: line starts with [ (phonetic-only or phonetic+word)
+   if(line.charCodeAt(0)===91||line.match(/^\[/)){
+    h+=phoneB(line);continue;
+   }
+   
+   // Pattern D: word meaning line (word + Chinese text, no phonetics)
+   // Check if next line starts with [ → alternating word/phonetic pattern
+   if(isWordLine(line)){
+    var sw=splitWordMeaning(line);
+    if(sw){
+     var nextIsPhone=li+1<lines.length && (lines[li+1].trim().charCodeAt(0)===91||lines[li+1].trim().match(/^\[/));
+     if(nextIsPhone){
+      // This is a word followed by phonetic on next line → make clickable
+      h+=wl(sw.word, null, sw.extra);continue;
+     }
     }
    }
+   
+   // Pattern E: syllable instruction line (\u5212\u5206 or \u62fc\u8bfb[X] pattern or \u91cd\u97f3)
+   // Must have both keyword AND phonetic brackets nearby to avoid false matches
+   if((line.indexOf('\u5212\u5206')>=0||line.indexOf('\u91cd\u97f3')>=0) || 
+      (line.indexOf('\u62fc\u8bfb')>=0 && line.match(/\[/))){
+    var t=esc(line);
+    t=t.replace(/(\w+)\[([^\]]+)\]/g,'<span class="dw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
+    t=t.replace(/\[([^\]]+)\]/g,'<span style="color:#7b1fa2;font-weight:600">[$1]</span>');
+    h+='<div class="desc-box" style="border-left-color:#ab47bc;background:#f3e5f5;padding:4px 10px;margin:2px 0 2px 28px;font-size:13px">'+t+'</div>';
+    continue;
+   }
+   
+   // Fallback: plain text
+   h+=info(line);
   }
  }
  
