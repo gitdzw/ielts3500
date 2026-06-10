@@ -3,64 +3,101 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>国际音标学习 · IPA</title>
+<title>国际音标 · 思维导图</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a2e}
-.header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:16px 20px;text-align:center}
-.header h1{font-size:20px;font-weight:700}
-.header p{font-size:13px;opacity:.85;margin-top:4px}
-.nav-bar{background:#fff;display:flex;flex-wrap:wrap;padding:10px 12px;gap:6px;justify-content:center;border-bottom:1px solid #e8e8e8;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.nav-btn{width:36px;height:36px;border-radius:50%;border:2px solid #ddd;background:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.nav-btn:hover{border-color:#667eea;color:#667eea}
-.nav-btn.active{background:#667eea;border-color:#667eea;color:#fff}
-.nav-btn.empty{opacity:.4;cursor:default;border-style:dashed}
-.main{max-width:800px;margin:0 auto;padding:20px 16px 40px}
-.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.title{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:16px;padding-bottom:12px;border-bottom:3px solid #667eea;display:flex;align-items:center;gap:10px}
-.title .n{background:#667eea;color:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.txt{line-height:1.9;font-size:15px;color:#333;padding:12px 16px;background:#f8f9ff;border-radius:10px;border-left:3px solid #667eea;white-space:pre-line;margin-bottom:16px}
-.l-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
-.l-card{background:#fff;border:2px solid #e8ecf4;border-radius:12px;padding:10px;text-align:center;cursor:pointer;transition:all .2s}
-.l-card:hover{border-color:#667eea;background:#f0f2ff;transform:translateY(-2px)}
-.l-card.v{border-color:#ffa726;background:#fff8e1}
-.l-card.v:hover{border-color:#f57c00;background:#fff3e0}
-.l-card .ch{font-size:22px;font-weight:700;color:#2c3e50}
-.l-card .ip{display:block;font-size:18px;color:#e74c3c;font-weight:700;font-family:'Times New Roman',serif;margin-top:4px;background:#fef0f0;border-radius:6px;padding:2px 8px}
-.l-card .hint{font-size:11px;color:#999;margin-top:4px}
-.l-card .tag{font-size:10px;background:#e8eaf6;color:#3949ab;padding:1px 6px;border-radius:4px;vertical-align:super}
-.p-block{margin-bottom:14px;border:2px solid #e8ecf4;border-radius:12px;overflow:hidden}
-.p-hdr{background:#667eea;color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.p-hdr .pi{font-size:18px;font-weight:700;font-family:'Times New Roman',serif;background:rgba(255,255,255,.2);padding:0 8px;border-radius:4px}
-.p-hdr .pd{font-size:13px;opacity:.9}
-.p-hdr .pr{font-size:12px;background:rgba(255,255,255,.2);padding:1px 8px;border-radius:6px;margin-left:auto}
-.p-body{padding:8px 12px;background:#fafbff}
-.w-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px}
-.w-item{display:flex;align-items:baseline;gap:6px;padding:5px 8px;border-radius:8px;cursor:pointer;transition:all .1s;background:#f5f5ff}
-.w-item:hover{background:#eef0ff;transform:translateX(3px)}
-.w-item .w{font-weight:600;color:#2c3e50;font-size:14px}
-.w-item .wi{color:#e74c3c;font-family:'Times New Roman',serif;font-size:13px}
-.w-item .wc{color:#999;font-size:12px}
-.w-item .sound{font-size:10px;display:none;margin-left:auto}
-.w-item:hover .sound{display:inline}
-.txt .cw{color:#2c3e50;font-weight:600;cursor:pointer;border-bottom:2px solid #667eea;padding:0 2px;border-radius:3px;transition:all .1s;white-space:nowrap}.txt .cw:hover{background:#eef0ff;border-bottom-color:#e74c3c}.txt .cw .spk{font-size:0;display:inline}.txt .cw:hover .spk{font-size:12px;margin-left:3px}.txt .ip{border-bottom:1px dashed #e74c3c}.cta{display:flex;justify-content:space-between;margin-top:20px;gap:12px}
-.cta button{flex:1;padding:12px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
-.cta .prev{background:#e8eaf6;color:#3949ab}
+.header{background:linear-gradient(135deg,#1a237e,#283593);color:#fff;padding:14px 20px;text-align:center}
+.header h1{font-size:18px;font-weight:700}
+.header p{font-size:12px;opacity:.8;margin-top:2px}
+.nav-bar{background:#fff;display:flex;flex-wrap:wrap;padding:8px 10px;gap:4px;justify-content:center;border-bottom:1px solid #e0e0e0;position:sticky;top:0;z-index:10;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.nav-btn{width:32px;height:32px;border-radius:50%;border:2px solid #c5cae9;background:#fff;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.nav-btn:hover{border-color:#3f51b5;color:#3f51b5}
+.nav-btn.active{background:#3f51b5;border-color:#3f51b5;color:#fff}
+.main{max-width:800px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+
+/* Mind Map Tree */
+.tree{padding:4px 0}
+.tree-root{font-size:17px;font-weight:700;color:#1a237e;padding:8px 12px;border-left:4px solid #3f51b5;margin-bottom:10px;background:#e8eaf6;border-radius:0 8px 8px 0}
+.tree-node{position:relative;padding-left:28px;margin:2px 0}
+.tree-node::before{content:'';position:absolute;left:10px;top:0;bottom:50%;width:14px;border-left:2px solid #bbb;border-bottom:2px solid #bbb;border-radius:0 0 0 6px}
+.tree-node::after{content:'';position:absolute;left:10px;top:50%;bottom:0;width:14px;border-left:2px solid #bbb}
+.tree-node:last-child::after{display:none}
+.tree-node.single::before{top:0;bottom:50%}
+.tree-node .n-label{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:6px;font-size:14px;cursor:pointer;transition:all .15s;line-height:1.6}
+.tree-node .n-label:hover{background:#e3f2fd}
+.tree-node .n-ph{font-family:'Times New Roman',serif;font-weight:700;color:#c62828;font-size:15px}
+.tree-node .n-desc{color:#555;font-size:13px}
+.tree-node .n-rule{color:#666;font-size:11px;background:#e8eaf6;padding:0 6px;border-radius:4px}
+.tree-node .n-word{font-weight:600;color:#1a237e}
+.tree-node .n-wi{font-family:'Times New Roman',serif;font-weight:600;color:#c62828;font-size:13px}
+.tree-node .n-wc{color:#888;font-size:12px;margin-left:2px}
+
+/* Word leaf nodes */
+.word-leaf{position:relative;padding:2px 0 2px 40px;display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .1s;border-radius:6px}
+.word-leaf:hover{background:#e3f2fd}
+.word-leaf::before{content:'●';position:absolute;left:26px;top:50%;transform:translateY(-50%);font-size:8px;color:#3f51b5}
+.word-leaf .wl{font-weight:600;color:#1a1a2e;font-size:14px}
+.word-leaf .wp{font-family:'Times New Roman',serif;color:#c62828;font-size:13px;font-weight:600}
+.word-leaf .wz{color:#666;font-size:12px}
+.word-leaf .play{font-size:10px;color:#3f51b5;opacity:0;transition:opacity .15s;cursor:pointer}
+.word-leaf:hover .play{opacity:1}
+.word-leaf .play:hover{color:#c62828}
+
+/* Desc in a compact info block */
+.desc-box{background:#fff8e1;border-left:3px solid #ffa726;padding:8px 12px;margin:8px 0 8px 28px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.7;color:#444;white-space:pre-wrap}
+.desc-box .dw{cursor:pointer;color:#1a237e;font-weight:600;border-bottom:1px dashed #3f51b5;transition:all .1s}
+.desc-box .dw:hover{background:#e8eaf6}
+.desc-box .dp{cursor:pointer;color:#c62828;font-weight:600;font-family:'Times New Roman',serif}
+
+/* Lesson 1 letter grid in tree */
+.l-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin:6px 0 0 28px}
+.l-card{background:#f5f5ff;border:1px solid #e8ecf4;border-radius:8px;padding:6px;text-align:center;cursor:pointer;transition:all .1s}
+.l-card:hover{background:#eef0ff;border-color:#3f51b5}
+.l-card .ch{font-weight:700;font-size:15px}
+.l-card .ip{font-family:'Times New Roman',serif;color:#c62828;font-size:14px;font-weight:700}
+.l-card .tag{font-size:9px;background:#e8eaf6;color:#3f51b5;padding:0 4px;border-radius:3px}
+.l-card.v .ch{color:#e65100}
+.l-card.v .tag{background:#fff3e0;color:#e65100}
+
+/* Collapsible desc toggle */
+.desc-toggle{display:inline-block;font-size:11px;color:#ff8f00;cursor:pointer;padding:2px 8px;border-radius:4px;background:#fff8e1;border:1px solid #ffe082;margin-left:8px}
+.desc-toggle:hover{background:#ffecb3}
+
+/* Text-only lessons */
+.txt-content{line-height:1.8;font-size:14px;color:#333;padding:10px 14px;margin:6px 0;border-left:3px solid #43a047;background:#f1f8e9;border-radius:0 8px 8px 0;white-space:pre-wrap}
+.txt-content .cw{color:#1a237e;font-weight:600;cursor:pointer;border-bottom:1px dashed #3f51b5;transition:all .1s}
+.txt-content .cw:hover{background:#e3f2fd}
+.txt-content .cw .spk{font-size:0}
+.txt-content .cw:hover .spk{font-size:11px;margin-left:2px}
+
+.cta{display:flex;justify-content:space-between;margin-top:16px;gap:10px}
+.cta button{flex:1;padding:10px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.cta .prev{background:#e8eaf6;color:#283593}
 .cta .prev:hover:not(:disabled){background:#c5cae9}
-.cta .next{background:#667eea;color:#fff}
-.cta .next:hover:not(:disabled){background:#5a6fd6}
+.cta .next{background:#3f51b5;color:#fff}
+.cta .next:hover:not(:disabled){background:#303f9f}
 .cta button:disabled{opacity:.4;cursor:not-allowed}
-@media(max-width:480px){.l-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}.w-grid{grid-template-columns:1fr 1fr}}
+
+/* Branch colors */
+.branch-0 .n-label{background:#e3f2fd}
+.branch-1 .n-label{background:#fce4ec}
+.branch-2 .n-label{background:#e8f5e9}
+.branch-3 .n-label{background:#fff3e0}
+.branch-4 .n-label{background:#f3e5f5}
+.branch-5 .n-label{background:#e0f7fa}
+
+@media(max-width:480px){.l-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}.tree-node{padding-left:20px}.word-leaf{padding-left:30px}.desc-box{margin-left:18px;font-size:12px}}
 </style>
 </head>
 <body>
 <div class="header">
-<h1>🔊 国际音标学习</h1>
-<p>点击字母/单词听发音 · 音标分开展示</p>
+<h1>🧠 国际音标 · 思维导图</h1>
+<p>树形结构 · 点击发音</p>
 </div>
 <div class="nav-bar" id="nav"></div>
 <div class="main"><div class="card">
-<div class="title" id="tt"></div>
 <div id="bd"></div>
 <div class="cta">
 <button class="prev" id="pb" onclick="g(-1)">◀ 上一课</button>
@@ -72,47 +109,105 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 var DATA=IPA_LESSONS,KEYS=[],CUR=1;
 for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
-function pw(w){if(w){new Audio('https://dict.youdao.com/dictvoice?audio='+encodeURIComponent(w)+'&type=2').play().catch(function(){})}}
-function r(n){
+
+function pw(w){
+ if(w){new Audio('https://dict.youdao.com/dictvoice?audio='+encodeURIComponent(w)+'&type=2').play().catch(function(){})}
+}
+
+function esc(s){
+ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,"\\'");
+}
+
+function makeClickableWords(txt){
+ // Convert word[phonetic] to clickable spans
+ return txt.replace(/(\w+)\[([^\]]+)\]/g,'<span class="dw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
+}
+
+function renderTree(n){
  var d=DATA[n];if(!d)return;
- document.getElementById('tt').innerHTML='<span class="n">'+n+'</span> '+d.title;
  var b=document.getElementById('bd'),h='';
+ 
+ // Root node
+ h+='<div class="tree"><div class="tree-root"><span class="n">'+n+'</span>. '+esc(d.title)+'</div>';
+ 
+ // Desc toggle (show/hide full explanation)
+ if(d.desc && d.desc.length>0){
+  var descId='desc_'+n;
+  h+='<div style="margin:2px 0 4px 28px"><span class="desc-toggle" onclick="var e=document.getElementById(\''+descId+'\');e.style.display=e.style.display===\'none\'?\'block\':\'none\'">📖 查看详细说明</span></div>';
+  h+='<div id="'+descId+'" class="desc-box" style="display:none">'+makeClickableWords(esc(d.desc).replace(/\n/g,'<br>'))+'</div>';
+ }
+ 
  if(d.t==='letters'){
-  h+='<div class="txt">'+d.s.replace(/\n/g,'<br>')+'</div><div class="l-grid">';
+  // Lesson 1: letter grid
+  if(d.s){h+='<div class="desc-box" style="background:#e3f2fd;border-left-color:#1a237e">'+esc(d.s).replace(/\n/g,'<br>')+'</div>';}
+  h+='<div class="l-grid">';
   for(var i=0;i<d.l.length;i++){
    var l=d.l[i],iv=d.v.indexOf(l[0])>=0;
-   h+='<div class="l-card'+(iv?' v':'')+'" onclick="pw(\''+(l[0][0])+'\')">';
-   h+='<div class="ch">'+l[0]+(iv?'<span class="tag">元</span>':'<span class="tag">辅</span>')+'</div>';
-   h+='<div class="ip">['+l[1]+']</div><div class="hint">🔊 点击发音</div></div>';}
+   h+='<div class="l-card'+(iv?' v':'')+'" onclick="pw(\''+l[0][0]+'\')">';
+   h+='<div class="ch">'+esc(l[0])+(iv?'<span class="tag">元</span>':'<span class="tag">辅</span>')+'</div>';
+   h+='<div class="ip">['+esc(l[1])+']</div></div>';}
   h+='</div>';
+  
  }else if(d.t==='p'){
+  // Mind map: phoneme branches
   for(var i=0;i<d.p.length;i++){
    var ph=d.p[i];
-   h+='<div class="p-block"><div class="p-hdr"><span class="pi">['+ph.i+']</span><span class="pd">'+ph.d+'</span><span class="pr">'+ph.r+'</span></div>';
-   h+='<div class="p-body"><div class="w-grid">';
+   var bc='branch-'+(i%6);
+   // Branch line (tree-node with label)
+   h+='<div class="tree-node'+(i===d.p.length-1?' single':'')+'"><span class="n-label '+bc+'">';
+   h+='<span class="n-ph">['+esc(ph.i)+']</span> ';
+   h+='<span class="n-desc">'+esc(ph.d)+'</span> ';
+   h+='<span class="n-rule">'+esc(ph.r)+'</span>';
+   h+='</span></div>';
+   
+   // Word leaves
    for(var j=0;j<ph.w.length;j++){
-    var wd=ph.w[j];
-    h+='<div class="w-item" onclick="pw(\''+wd[0].replace(/'/g,"\\'")+'\')"><span class="w">'+wd[0]+'</span><span class="wi">['+wd[1]+']</span>'
-     +(wd[2]?'<span class="wc">'+wd[2]+'</span>':'')+'<span class="sound">🔊</span></div>';}
-   h+='</div></div></div>';}
+    var w=ph.w[j];
+    h+='<div class="word-leaf" onclick="pw(\''+w[0].replace(/'/g,"\\'")+'\')">';
+    h+='<span class="wl">'+esc(w[0])+'</span> ';
+    h+='<span class="wp">['+esc(w[1])+']</span>';
+    if(w[2]){h+='<span class="wz">'+esc(w[2])+'</span>';}
+    h+='<span class="play">🔊</span>';
+    h+='</div>';}
+  }
+  
  }else{
-  var txt=d.s.replace(/\n/g,'<br>');
-  txt=txt.replace(/(\w+)\[([^\]]+)\]/g,'<span class="cw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
-  h='<div class="txt">'+txt+'</div>';}
+  // Text type (lessons 15-16)
+  var txt=d.desc||d.s||'';
+  h+='<div class="txt-content">'+makeClickableWords(esc(txt).replace(/\n/g,'<br>'))+'</div>';
+ }
+ 
+ h+='</div>';
  b.innerHTML=h;
+ 
+ // Nav buttons state
  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',parseInt(b.dataset.num)===n)});
  document.getElementById('pb').disabled=n===KEYS[0];
  document.getElementById('nb').disabled=n===KEYS[KEYS.length-1];
 }
-function g(d){var i=KEYS.indexOf(CUR),n=i+d;if(n<0||n>=KEYS.length)return;CUR=KEYS[n];r(CUR);window.scrollTo({top:0,behavior:'smooth'})}
+
+function g(dir){
+ var i=KEYS.indexOf(CUR),n=i+dir;
+ if(n<0||n>=KEYS.length)return;
+ CUR=KEYS[n];
+ renderTree(CUR);
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Build nav
 var nav=document.getElementById('nav');
 for(var i=1;i<=16;i++){
  var b=document.createElement('button');
  b.className='nav-btn';
  b.textContent=i;b.dataset.num=i;
- b.onclick=function(){var nn=parseInt(this.dataset.num);if(DATA[nn]){CUR=nn;r(CUR);window.scrollTo({top:0,behavior:'smooth'})}};
- nav.appendChild(b);}
-r(1);
+ b.onclick=function(){
+  var nn=parseInt(this.dataset.num);
+  if(DATA[nn]){CUR=nn;renderTree(CUR);window.scrollTo({top:0,behavior:'smooth'})}
+ };
+ nav.appendChild(b);
+}
+
+renderTree(1);
 </script>
 </body>
 </html>
