@@ -128,7 +128,7 @@ function renderTree(n){
  var b=document.getElementById('bd'),h='';
  
  // Root node
- h+='<div class="tree"><div class="tree-root"><span class="n">'+n+'</span>. '+esc(d.title)+(d.s?'<br><span class="sub">'+esc(d.s).replace(/\n/g,'<br>')+'</span>':'')+'</div>';
+ h+='<div class="tree"><div class="tree-root"><span class="n">'+n+'</span>. '+esc(d.title)+(d.s&&d.t!=='letters'?'<br><span class="sub">'+esc(d.s).replace(/\n/g,'<br>')+'</span>':'')+'</div>';
  
  // Desc toggle (show/hide full explanation) - skip for txt type (content already shown)
  if(d.t!=='txt' && d.desc && d.desc.length>0){
@@ -139,7 +139,7 @@ function renderTree(n){
  
  if(d.t==='letters'){
   // Lesson 1: letter grid
-  if(d.s){h+='<div class="desc-box" style="background:#e3f2fd;border-left-color:#1a237e">'+esc(d.s).replace(/\n/g,'<br>')+'</div>';}
+  // s-field not shown here (shown in tree-root or desc toggle)
   h+='<div class="l-grid">';
   for(var i=0;i<d.l.length;i++){
    var l=d.l[i],iv=d.v.indexOf(l[0])>=0;
