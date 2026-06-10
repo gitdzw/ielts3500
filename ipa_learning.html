@@ -120,24 +120,9 @@ KEYS.sort(function(a,b){return a-b});
 
 
 function playPhone(ph,egWord){
- var m={
-  'iː':'ee','ɪ':'ih','ɜː':'er','ə':'uh','ɑː':'ah','ʌ':'uh',
-  'ɔː':'aw','ɒ':'o','uː':'oo','ʊ':'oo','æ':'a','e':'eh',
-  'eɪ':'ay','ɔɪ':'oy','aɪ':'eye','əʊ':'oh','aʊ':'ow',
-  'ɪə':'eer','eə':'air','ʊə':'oor',
-  'p':'p','b':'b','t':'t','d':'d','k':'k','ɡ':'g','f':'f','v':'v','s':'s','z':'z',
-  'θ':'th','ð':'th','ʃ':'sh','ʒ':'zh','h':'h','r':'r',
-  'tʃ':'ch','dʒ':'j','tr':'tr','dr':'dr','ts':'ts','dz':'dz','m':'m','n':'n','ŋ':'ng',
-  'j':'y','w':'w','l':'l'
- };
- var t=m[ph]||ph;
- var u=new SpeechSynthesisUtterance(t);
- u.lang='en-US';u.rate=0.75;
- var vs=window.speechSynthesis.getVoices();
- var v=vs.filter(function(x){return x.name.indexOf('Aria')>=0&&x.lang.indexOf('en')>=0})[0];
- if(v)u.voice=v;
- window.speechSynthesis.cancel();
- window.speechSynthesis.speak(u);
+ // Use Youdao dictvoice (same source as desktop YoudaoDict) for accurate pronunciation
+ // The example word contains the pure phoneme sound: e.g. "bee" for [iː], "pig" for [p]
+ pw(egWord);
 }
 
 function pw(w){
