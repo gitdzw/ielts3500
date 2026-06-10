@@ -128,10 +128,10 @@ function renderTree(n){
  var b=document.getElementById('bd'),h='';
  
  // Root node
- h+='<div class="tree"><div class="tree-root"><span class="n">'+n+'</span>. '+esc(d.title)+(d.s&&d.t!=='letters'?'<br><span class="sub">'+esc(d.s).replace(/\n/g,'<br>')+'</span>':'')+'</div>';
+ h+='<div class="tree"><div class="tree-root"><span class="n">'+n+'</span>. '+esc(d.title)+(d.s&&d.t!=='letters'&&d.t!=='txt'?'<br><span class="sub">'+esc(d.s).replace(/\n/g,'<br>')+'</span>':'')+'</div>';
  
- // Desc toggle (show/hide full explanation) - skip for txt type (content already shown)
- if(d.t!=='txt' && d.desc && d.desc.length>0){
+ // Desc toggle (show/hide full explanation)
+ if(d.desc && d.desc.length>0){
   var descId='desc_'+n;
   h+='<div style="margin:2px 0 4px 28px"><span class="desc-toggle" onclick="var e=document.getElementById(\''+descId+'\');e.style.display=e.style.display===\'none\'?\'block\':\'none\'">📖 查看详细说明</span></div>';
   h+='<div id="'+descId+'" class="desc-box" style="display:none">'+makeClickableWords(esc(d.desc).replace(/\n/g,'<br>'))+'</div>';
@@ -251,7 +251,11 @@ function renderTree(n){
    
    // Pattern C: line starts with [ (phonetic-only or phonetic+word)
    if(line.charCodeAt(0)===91||line.match(/^\[/)){
-    h+=phoneB(line);continue;
+    h+=phoneB(line);
+    // Extract word from phonetic line: ...] word中文
+    var wm=line.match(/\]\s*\.?\s*([A-Za-z'’-]+)(.*)$/);
+    if(wm){h+=wl(wm[1], null, wm[2]||'');}
+    continue;
    }
    
    // Pattern D: word meaning line (word + Chinese text, no phonetics)
@@ -278,8 +282,17 @@ function renderTree(n){
     continue;
    }
    
-   // Fallback: plain text
-   h+=info(line);
+   // Fallback: try to extract word from line with ]word\u610f\u601d pattern
+   var tw=line.match(/\]\s*\.?\s*([A-Za-z'\u2019-]+)(.*)$/);
+   if(tw && tw[1]){
+    var t=esc(line);
+    t=t.replace(/(\w+)\[([^\]]+)\]/g,'<span class="dw" onclick="pw(\'$1\')">$1<span class="spk"> 🔊</span></span>[$2]');
+    t=t.replace(/\[([^\]]+)\]/g,'<span style="color:#ff6f00;font-weight:600">[$1]</span>');
+    h+='<div class="desc-box" style="border-left-color:#5c6bc0;background:#e8eaf6;padding:4px 10px;margin:2px 0 2px 28px;font-family:\'Courier New\',monospace;font-size:12px">'+t+'</div>';
+    h+=wl(tw[1], null, tw[2]||'');
+   } else {
+    h+=info(line);
+   }
   }
  }
  
