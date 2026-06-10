@@ -117,13 +117,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 var DATA=IPA_LESSONS,KEYS=[],CUR=1;
 for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
-
-
-function playPhone(ph,egWord){
- // Use Youdao dictvoice (same source as desktop YoudaoDict) for accurate pronunciation
- // The example word contains the pure phoneme sound: e.g. "bee" for [iː], "pig" for [p]
- pw(egWord);
+function playPhone(ph){
+ var pmap={};
+ pmap['i\u02d0']='ee';pmap['\u026a']='i';pmap['\u025c\u02d0']='ur';pmap['\u0259']='a';
+ pmap['\u0251\u02d0']='ar';pmap['\u028c']='u';pmap['\u0254\u02d0']='aw';pmap['\u0252']='o';
+ pmap['u\u02d0']='oo';pmap['\u028a']='uu';pmap['\u00e6']='aa';pmap['e']='e';
+ pmap['e\u026a']='ay';pmap['\u0254\u026a']='oy';pmap['a\u026a']='eye';
+ pmap['\u0259\u028a']='oh';pmap['a\u028a']='ow';
+ pmap['\u026a\u0259']='ear';pmap['e\u0259']='air';pmap['\u028a\u0259']='ore';
+ pmap['p']='pp';pmap['b']='bb';pmap['t']='tt';pmap['d']='dd';
+ pmap['k']='kk';pmap['\u0261']='gg';pmap['f']='ff';pmap['v']='v';
+ pmap['s']='s';pmap['z']='z';
+ pmap['\u03b8']='th';pmap['\u00f0']='the';pmap['\u0283']='sh';pmap['\u0292']='je';
+ pmap['h']='h';pmap['r']='r';pmap['t\u0283']='ch';pmap['d\u0292']='j';
+ pmap['tr']='tr';pmap['dr']='dr';pmap['ts']='ts';pmap['dz']='dz';
+ pmap['m']='m';pmap['n']='n';pmap['\u014b']='ng';pmap['j']='y';
+ pmap['w']='w';pmap['l']='l';
+ var t=pmap[ph]||ph;
+ new Audio('https://dict.youdao.com/dictvoice?audio='+encodeURIComponent(t)+'&type=1').play();
 }
+
 
 function pw(w){
  if(w){new Audio('https://dict.youdao.com/dictvoice?audio='+encodeURIComponent(w)+'&type=2').play().catch(function(){})}
@@ -187,42 +200,33 @@ function renderTree(n){
   }
   
  }else if(d.t==='phoneme'){
-  // Lesson 0: Phoneme cards (vowels + consonants)
-  // desc-box content moved to "查看详细说明" toggle
-  
-  // Vowels section
   h+='<div class="tree-root" style="margin-top:12px;font-size:15px"><span style="color:#c62828">●</span> 元音音素 (20个)</div>';
   h+='<div class="ph-grid">';
   var vw=d.vowels||[];
   for(var vi=0;vi<vw.length;vi++){
    var v=vw[vi];
    if(v&&v.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+v[0].replace(/'/g,"\\'")+'\',\''+v[2].replace(/'/g,"\\'")+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+v[0].replace(/'/g,"\\'")+'\')">';
     h+='<span class="ph-sym">['+esc(v[0])+']</span>';
     h+='<span class="ph-type">'+esc(v[1])+'</span>';
-    h+='<span class="ph-word">'+esc(v[2])+' <span class="ph-word-phone">['+esc(v[3])+']</span></span>';
     h+='<span class="play">🔊</span></div>';
    }
   }
   h+='</div>';
-  
-  // Consonants section
   h+='<div class="tree-root" style="margin-top:16px;font-size:15px"><span style="color:#1565c0">●</span> 辅音音素 (28个)</div>';
   h+='<div class="ph-grid">';
   var cw=d.consonants||[];
   for(var ci=0;ci<cw.length;ci++){
    var c=cw[ci];
    if(c&&c.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+c[0].replace(/'/g,"\\'")+'\',\''+c[2].replace(/'/g,"\\'")+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+c[0].replace(/'/g,"\\'")+'\')">';
     h+='<span class="ph-sym">['+esc(c[0])+']</span>';
     h+='<span class="ph-type">'+esc(c[1])+'</span>';
-    h+='<span class="ph-word">'+esc(c[2])+' <span class="ph-word-phone">['+esc(c[3])+']</span></span>';
     h+='<span class="play">🔊</span></div>';
    }
   }
   h+='</div>';
-  
- }else{  // Text type
+ }else{  // Text type}else{  // Text type
   // (lessons 15-16) - mind map with heading-phonetic-word grouping
   var txt=d.desc||d.s||'';
   var lines=txt.split('\n');
