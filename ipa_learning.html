@@ -117,7 +117,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 var DATA=IPA_LESSONS,KEYS=[],CUR=1;
 for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
-function playPhone(ph){
+function playPhone(ph, exWord){
+ if(exWord){
+  pw(exWord);
+  return;
+ }
+ // Fallback: old mapping (only used if no example word)
  var pmap={};
  pmap['i\u02d0']='ee';pmap['\u026a']='i';pmap['\u025c\u02d0']='ur';pmap['\u0259']='a';
  pmap['\u0251\u02d0']='ar';pmap['\u028c']='u';pmap['\u0254\u02d0']='aw';pmap['\u0252']='o';
@@ -200,26 +205,52 @@ function renderTree(n){
   }
   
  }else if(d.t==='phoneme'){
-  h+='<div class="tree-root" style="margin-top:12px;font-size:15px"><span style="color:#c62828">●</span> 元音音素 (20个)</div>';
+  // === 单元音 (12个) ===
+  h+='<div class="tree-root" style="margin-top:12px;font-size:15px"><span style="color:#c62828">●</span> 单元音 (12个)</div>';
   h+='<div class="ph-grid">';
-  var vw=d.vowels||[];
-  for(var vi=0;vi<vw.length;vi++){
-   var v=vw[vi];
+  for(var vi=0;vi<12&&vi<d.vowels.length;vi++){
+   var v=d.vowels[vi];
    if(v&&v.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+v[0].replace(/'/g,"\\'")+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\',\''+(v[2]||'')+'\')">';
     h+='<span class="ph-sym">['+esc(v[0])+']</span>';
     h+='<span class="ph-type">'+esc(v[1])+'</span>';
     h+='<span class="play">🔊</span></div>';
    }
   }
   h+='</div>';
-  h+='<div class="tree-root" style="margin-top:16px;font-size:15px"><span style="color:#1565c0">●</span> 辅音音素 (28个)</div>';
+  // === 双元音 (8个) ===
+  h+='<div class="tree-root" style="margin-top:16px;font-size:15px"><span style="color:#e65100">●</span> 双元音 (8个)</div>';
   h+='<div class="ph-grid">';
-  var cw=d.consonants||[];
-  for(var ci=0;ci<cw.length;ci++){
-   var c=cw[ci];
+  for(var vi=12;vi<d.vowels.length;vi++){
+   var v=d.vowels[vi];
+   if(v&&v.length>=3){
+    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\',\''+(v[2]||'')+'\')">';
+    h+='<span class="ph-sym">['+esc(v[0])+']</span>';
+    h+='<span class="ph-type">'+esc(v[1])+'</span>';
+    h+='<span class="play">🔊</span></div>';
+   }
+  }
+  h+='</div>';
+  // === 清浊成对 (10对, 20个) ===
+  h+='<div class="tree-root" style="margin-top:16px;font-size:15px"><span style="color:#1565c0">●</span> 清浊成对 (10对, 20个)</div>';
+  h+='<div class="ph-grid">';
+  for(var ci=0;ci<20&&ci<d.consonants.length;ci++){
+   var c=d.consonants[ci];
    if(c&&c.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+c[0].replace(/'/g,"\\'")+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\',\''+(c[2]||'')+'\')">';
+    h+='<span class="ph-sym">['+esc(c[0])+']</span>';
+    h+='<span class="ph-type">'+esc(c[1])+'</span>';
+    h+='<span class="play">🔊</span></div>';
+   }
+  }
+  h+='</div>';
+  // === 其他辅音 (8个) ===
+  h+='<div class="tree-root" style="margin-top:16px;font-size:15px"><span style="color:#6a1b9a">●</span> 其他辅音 (8个)</div>';
+  h+='<div class="ph-grid">';
+  for(var ci=20;ci<d.consonants.length;ci++){
+   var c=d.consonants[ci];
+   if(c&&c.length>=3){
+    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\',\''+(c[2]||'')+'\')">';
     h+='<span class="ph-sym">['+esc(c[0])+']</span>';
     h+='<span class="ph-type">'+esc(c[1])+'</span>';
     h+='<span class="play">🔊</span></div>';
