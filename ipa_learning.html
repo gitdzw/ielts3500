@@ -119,6 +119,7 @@ for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
 
 // HYBRID phoneme audio: real MP3 recordings + synthesized WAV fallback
+var _PH_AUDIO=null;
 var PH_REAL={ // Real human recordings from yingyuyinbiao.com
   "i\u02d0":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/I-long.mp3",
   "\u026a":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/I.mp3",
@@ -149,24 +150,24 @@ var PH_REAL={ // Real human recordings from yingyuyinbiao.com
 };
 
 function playPhone(ph) {
-  // Try real recording first
+  // Keep global reference to prevent garbage collection
+  if (_PH_AUDIO) { _PH_AUDIO.pause(); _PH_AUDIO = null; }
   var url = PH_REAL[ph];
   if (url) {
-    var a = new Audio(url);
-    a.volume = 0.5;
-    a.play().catch(function() { playSynth(ph); }); // fallback to synth
+    _PH_AUDIO = new Audio(url);
+    _PH_AUDIO.volume = 0.5;
+    _PH_AUDIO.play().catch(function() { playSynth(ph); });
   } else {
     playSynth(ph);
   }
 }
 
 function playSynth(ph) {
-  // Self-hosted synthesized WAV for phonemes without accessible real recordings
   var fn = {"\u00e6":"ae","\u0252":"o_short","\u0254\u02d0":"o_long","\u028a":"u_short","\u028c":"v_short","\u025c\u02d0":"er_long","\u0259":"schwa","e\u026a":"ei","\u0254\u026a":"oi","\u0259\u028a":"ou","a\u028a":"au","\u026a\u0259":"ie","e\u0259":"er_diph","\u028a\u0259":"ue","\u03b8":"th_unvoiced","\u00f0":"th_voiced","\u0283":"sh","\u0292":"zh","t\u0283":"ch","d\u0292":"j","\u014b":"ng","j":"y"}[ph];
   if (fn) {
-    var a = new Audio('audio/' + fn + '.wav');
-    a.volume = 0.5;
-    a.play().catch(function(){});
+    _PH_AUDIO = new Audio('audio/' + fn + '.wav');
+    _PH_AUDIO.volume = 0.5;
+    _PH_AUDIO.play().catch(function(){});
   }
 }
 
