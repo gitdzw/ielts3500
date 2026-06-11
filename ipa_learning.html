@@ -118,32 +118,34 @@ var DATA=IPA_LESSONS,KEYS=[],CUR=1;
 for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
 
-// Pure phoneme audio from yingyuyinbiao.com (BBC English pronunciation)
-var PH_EX={
- "i\u02d0":"bee", "\u026a":"pig", "e":"red", "\u00e6":"cat",
- "\u0251\u02d0":"car", "\u0252":"box", "\u0254\u02d0":"horse",
- "\u028a":"book", "u\u02d0":"school", "\u028c":"monday",
- "\u025c\u02d0":"her", "\u0259":"sister",
- "e\u026a":"they", "a\u026a":"why", "\u0254\u026a":"boy",
- "\u0259\u028a":"home", "a\u028a":"mouth",
- "\u026a\u0259":"year", "e\u0259":"there", "\u028a\u0259":"tour",
- "p":"play", "b":"big", "t":"two", "d":"did", "k":"keep",
- "\u0261":"go", "f":"for", "v":"very",
- "\u03b8":"three", "\u00f0":"that",
- "s":"small", "z":"zoo",
- "\u0283":"fish", "\u0292":"usual",
- "t\u0283":"cheap", "d\u0292":"jump",
- "tr":"tree", "dr":"dress", "ts":"hats", "dz":"goods",
- "h":"help", "r":"run", "l":"little",
- "m":"me", "n":"nice", "\u014b":"thank",
- "w":"wet", "j":"yet"
+// Pure phoneme audio from self-hosted WAV files
+// Generated using formant synthesis - hosted alongside the app on GitHub Pages
+var PH_AUDIO = {
+  "i\u02d0":"i_long","\u026a":"i","e":"e","\u00e6":"ae",
+  "\u0251\u02d0":"a_long","\u0252":"o_short","\u0254\u02d0":"o_long",
+  "\u028a":"u_short","u\u02d0":"u_long","\u028c":"v_short",
+  "\u025c\u02d0":"er_long","\u0259":"schwa",
+  "e\u026a":"ei","a\u026a":"ai","\u0254\u026a":"oi",
+  "\u0259\u028a":"ou","a\u028a":"au",
+  "\u026a\u0259":"ie","e\u0259":"er_diph","\u028a\u0259":"ue",
+  "p":"p","b":"b","t":"t","d":"d","k":"k",
+  "\u0261":"g","f":"f","v":"v",
+  "\u03b8":"th_unvoiced","\u00f0":"th_voiced",
+  "s":"s","z":"z",
+  "\u0283":"sh","\u0292":"zh",
+  "t\u0283":"ch","d\u0292":"j",
+  "tr":"tr","dr":"dr","ts":"ts","dz":"dz",
+  "h":"h","r":"r","l":"l",
+  "m":"m","n":"n","\u014b":"ng",
+  "w":"w","j":"y"
 };
-
 function playPhone(ph) {
- var w = PH_EX[ph] || ph;
- pw(w);
-}function pw(w){
- if(w){new Audio('https://dict.youdao.com/dictvoice?audio='+encodeURIComponent(w)+'&type=2').play().catch(function(){})}
+  var fn = PH_AUDIO[ph];
+  if (fn) {
+    var a = new Audio('audio/' + fn + '.wav');
+    a.volume = 0.5;
+    a.play().catch(function(){});
+  }
 }
 
 function esc(s){
