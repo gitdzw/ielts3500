@@ -170,15 +170,6 @@ function playSynth(ph) {
   }
 }
 
-function playPhone(ph) {
-  var fn = PH_AUDIO[ph];
-  if (fn) {
-    var a = new Audio('audio/' + fn + '.wav');
-    a.volume = 0.5;
-    a.play().catch(function(){});
-  }
-}
-
 function esc(s){
  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,"\\'");
 }
