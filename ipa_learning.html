@@ -118,30 +118,25 @@ var DATA=IPA_LESSONS,KEYS=[],CUR=1;
 for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
 
-// All 48 IPA phoneme audio: self-hosted WAV (improved Klatt synthesis)
-var _PH_AUDIO=null;
-var PH_WAV = {
-  "i\u02d0":"i_long","\u026a":"i","e":"e","\u00e6":"ae",
-  "\u0251\u02d0":"a_long","\u0252":"o_short","\u0254\u02d0":"o_long",
-  "\u028a":"u_short","u\u02d0":"u_long","\u028c":"v_short",
-  "\u025c\u02d0":"er_long","\u0259":"schwa",
-  "e\u026a":"ei","a\u026a":"ai","\u0254\u026a":"oi","\u0259\u028a":"ou",
-  "a\u028a":"au","\u026a\u0259":"ie","e\u0259":"er_diph","\u028a\u0259":"ue",
-  "p":"p","b":"b","t":"t","d":"d","k":"k","\u0261":"g",
-  "f":"f","v":"v","\u03b8":"th_unvoiced","\u00f0":"th_voiced",
-  "s":"s","z":"z","\u0283":"sh","\u0292":"zh",
-  "t\u0283":"ch","d\u0292":"j","tr":"tr","dr":"dr","ts":"ts","dz":"dz",
-  "h":"h","r":"r","l":"l","m":"m","n":"n","\u014b":"ng","w":"w","j":"y"
-};
+// Phoneme audio via Youdao dictvoice (desktop YoudaoDict engine)
+// Each phoneme plays its example word through Youdao TTS
+var _PH_AUDIO = null;
 
-function playPhone(ph) {
+function playPhone(ph, exWord) {
   if (_PH_AUDIO) { _PH_AUDIO.pause(); _PH_AUDIO = null; }
-  var fn = PH_WAV[ph];
-  if (fn) {
-    _PH_AUDIO = new Audio('audio/' + fn + '.wav');
+  if (exWord) {
+    _PH_AUDIO = new Audio('https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(exWord) + '&type=1');
     _PH_AUDIO.volume = 0.5;
     _PH_AUDIO.play().catch(function(){});
   }
+}
+
+function pw(w) {
+  if (_PH_AUDIO) { _PH_AUDIO.pause(); _PH_AUDIO = null; }
+  if (!w) return;
+  _PH_AUDIO = new Audio('https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(w) + '&type=1');
+  _PH_AUDIO.volume = 0.5;
+  _PH_AUDIO.play().catch(function(){});
 }
 
 function esc(s){
@@ -208,9 +203,10 @@ function renderTree(n){
   for(var vi=0;vi<12&&vi<d.vowels.length;vi++){
    var v=d.vowels[vi];
    if(v&&v.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\',\''+v[2].replace(/'/g,"\\'")+'\')">';
     h+='<span class="ph-sym">['+esc(v[0])+']</span>';
     h+='<span class="ph-type">'+esc(v[1])+'</span>';
+    h+='<span class="ph-word">'+esc(v[2])+'</span>';
     h+='<span class="play">🔊</span></div>';
    }
   }
@@ -221,9 +217,10 @@ function renderTree(n){
   for(var vi=12;vi<d.vowels.length;vi++){
    var v=d.vowels[vi];
    if(v&&v.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+v[0]+'\',\''+v[2].replace(/'/g,"\\'")+'\')">';
     h+='<span class="ph-sym">['+esc(v[0])+']</span>';
     h+='<span class="ph-type">'+esc(v[1])+'</span>';
+    h+='<span class="ph-word">'+esc(v[2])+'</span>';
     h+='<span class="play">🔊</span></div>';
    }
   }
@@ -234,9 +231,10 @@ function renderTree(n){
   for(var ci=0;ci<20&&ci<d.consonants.length;ci++){
    var c=d.consonants[ci];
    if(c&&c.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\',\''+c[2].replace(/'/g,"\\'")+'\')">';
     h+='<span class="ph-sym">['+esc(c[0])+']</span>';
     h+='<span class="ph-type">'+esc(c[1])+'</span>';
+    h+='<span class="ph-word">'+esc(c[2])+'</span>';
     h+='<span class="play">🔊</span></div>';
    }
   }
@@ -247,9 +245,10 @@ function renderTree(n){
   for(var ci=20;ci<d.consonants.length;ci++){
    var c=d.consonants[ci];
    if(c&&c.length>=3){
-    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\')">';
+    h+='<div class="ph-card" onclick="playPhone(\''+c[0]+'\',\''+c[2].replace(/'/g,"\\'")+'\')">';
     h+='<span class="ph-sym">['+esc(c[0])+']</span>';
     h+='<span class="ph-type">'+esc(c[1])+'</span>';
+    h+='<span class="ph-word">'+esc(c[2])+'</span>';
     h+='<span class="play">🔊</span></div>';
    }
   }
