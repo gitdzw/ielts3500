@@ -118,27 +118,58 @@ var DATA=IPA_LESSONS,KEYS=[],CUR=1;
 for(var k in DATA)if(Number(k)>0){KEYS.push(Number(k))}
 KEYS.sort(function(a,b){return a-b});
 
-// Pure phoneme audio from self-hosted WAV files
-// Generated using formant synthesis - hosted alongside the app on GitHub Pages
-var PH_AUDIO = {
-  "i\u02d0":"i_long","\u026a":"i","e":"e","\u00e6":"ae",
-  "\u0251\u02d0":"a_long","\u0252":"o_short","\u0254\u02d0":"o_long",
-  "\u028a":"u_short","u\u02d0":"u_long","\u028c":"v_short",
-  "\u025c\u02d0":"er_long","\u0259":"schwa",
-  "e\u026a":"ei","a\u026a":"ai","\u0254\u026a":"oi",
-  "\u0259\u028a":"ou","a\u028a":"au",
-  "\u026a\u0259":"ie","e\u0259":"er_diph","\u028a\u0259":"ue",
-  "p":"p","b":"b","t":"t","d":"d","k":"k",
-  "\u0261":"g","f":"f","v":"v",
-  "\u03b8":"th_unvoiced","\u00f0":"th_voiced",
-  "s":"s","z":"z",
-  "\u0283":"sh","\u0292":"zh",
-  "t\u0283":"ch","d\u0292":"j",
-  "tr":"tr","dr":"dr","ts":"ts","dz":"dz",
-  "h":"h","r":"r","l":"l",
-  "m":"m","n":"n","\u014b":"ng",
-  "w":"w","j":"y"
+// HYBRID phoneme audio: real MP3 recordings + synthesized WAV fallback
+var PH_REAL={ // Real human recordings from yingyuyinbiao.com
+  "i\u02d0":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/I-long.mp3",
+  "\u026a":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/I.mp3",
+  "e":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/e.mp3",
+  "\u0251\u02d0":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/a-long.mp3",
+  "u\u02d0":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/u-long.mp3",
+  "a\u026a":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/ai.mp3",
+  "p":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/p_sound.mp3",
+  "b":"https://yingyuyinbiao.com/wp-content/uploads/2020/08/b_sound.mp3",
+  "t":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/t_sound.mp3",
+  "d":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/d_sound.mp3",
+  "k":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/k_sound.mp3",
+  "\u0261":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/g_sound.mp3",
+  "f":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/f_sound.mp3",
+  "v":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/v_sound.mp3",
+  "s":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/s_sound.mp3",
+  "z":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/z_sound.mp3",
+  "tr":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/tr.mp3",
+  "dr":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/dr.mp3",
+  "ts":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/ts.mp3",
+  "dz":"https://yingyuyinbiao.com/wp-content/uploads/2020/09/dz.mp3",
+  "h":"https://yingyuyinbiao.com/wp-content/uploads/2020/10/h.mp3",
+  "r":"https://yingyuyinbiao.com/wp-content/uploads/2020/10/r.mp3",
+  "l":"https://yingyuyinbiao.com/wp-content/uploads/2020/10/l.mp3",
+  "m":"https://yingyuyinbiao.com/wp-content/uploads/2020/10/m.mp3",
+  "n":"https://yingyuyinbiao.com/wp-content/uploads/2020/10/n.mp3",
+  "w":"https://yingyuyinbiao.com/wp-content/uploads/2020/10/w-wet-vet.mp3"
 };
+
+function playPhone(ph) {
+  // Try real recording first
+  var url = PH_REAL[ph];
+  if (url) {
+    var a = new Audio(url);
+    a.volume = 0.5;
+    a.play().catch(function() { playSynth(ph); }); // fallback to synth
+  } else {
+    playSynth(ph);
+  }
+}
+
+function playSynth(ph) {
+  // Self-hosted synthesized WAV for phonemes without accessible real recordings
+  var fn = {"\u00e6":"ae","\u0252":"o_short","\u0254\u02d0":"o_long","\u028a":"u_short","\u028c":"v_short","\u025c\u02d0":"er_long","\u0259":"schwa","e\u026a":"ei","\u0254\u026a":"oi","\u0259\u028a":"ou","a\u028a":"au","\u026a\u0259":"ie","e\u0259":"er_diph","\u028a\u0259":"ue","\u03b8":"th_unvoiced","\u00f0":"th_voiced","\u0283":"sh","\u0292":"zh","t\u0283":"ch","d\u0292":"j","\u014b":"ng","j":"y"}[ph];
+  if (fn) {
+    var a = new Audio('audio/' + fn + '.wav');
+    a.volume = 0.5;
+    a.play().catch(function(){});
+  }
+}
+
 function playPhone(ph) {
   var fn = PH_AUDIO[ph];
   if (fn) {
